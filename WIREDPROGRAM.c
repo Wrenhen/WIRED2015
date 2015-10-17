@@ -87,7 +87,7 @@ void flappy_wing(){          // Code for the Flappy wing
   motor[flappywing] = flappy_wing_position;
 }
 
-void arm() {
+void arm_joint() {
   if(vexRT[Btn6U] == 1)      //If Btn6U is pushed, the arm should move up
   {
     motor[arm] = 100;    //Set the motor speed to 100
@@ -141,7 +141,7 @@ task main ()
     drive();
     collection();
     flappy_wing();
-    arm();
+    arm_joint();
     end_effector();
   }
 }
