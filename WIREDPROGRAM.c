@@ -18,23 +18,22 @@ int last_speed_button_state ;
 
 void init_drive_parameters()
 {
-
-	speed_divisor = 1 ;
-	last_speed_button_state = 0 ;
+  speed_divisor = 1 ;
+  last_speed_button_state = 0 ;
 }
 
 void change_speed(){
-		int current_speed_button_state ;
+  int current_speed_button_state ;
 #if ( _TARGET == "VirtWorld" )
-    current_speed_button_state = joy1Pov(Pov0) ;
+  current_speed_button_state = joy1Pov(Pov0) ;
 #else
-    current_speed_button_state = vexRT[Btn7U] ;
+  current_speed_button_state = vexRT[Btn7U] ;
 #endif
-	if( last_speed_button_state == 0 && current_speed_button_state == 1)
-	{
-	  if (speed_divisor == 4 )
-	  {
-	  	speed_divisor = 1;
+  if( last_speed_button_state == 0 && current_speed_button_state == 1)
+  {
+    if (speed_divisor == 4 )
+    {
+      speed_divisor = 1;
     } else {
       speed_divisor = 4;
     }
@@ -42,93 +41,93 @@ void change_speed(){
   last_speed_button_state = current_speed_button_state ;
 }
 
-void drive(){									// Code for driving the robot
+void drive(){                  // Code for driving the robot
 #if ( _TARGET == "VirtWorld" )
   getJoystickSettings(joystick);
   motor[port2] = -joystick.joy1_y2 / speed_divisor ;
   motor[port3] = joystick.joy1_y1 / speed_divisor ;
 #else
-	motor[port2] = vexRT[Ch3] / speed_divisor ;	// Controlling the left wheel using channel 3
-	motor[port9] = vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
+  motor[port2] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
+  motor[port9] = vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
 #endif
 }
 
-void collection() {						//Code for the collection subsystem
+void collection() {            //Code for the collection subsystem
 #if ( _TARGET != "VirtWorld")
-		if(vexRT[Btn5U] == 1)		//If Btn5U is pushed, the forklift should move up
-   	{
-		  motor[port3] = 100;			//Set the motor speed to 100
-	  }
-	 else if (vexRT[Btn5D] == 1)//If Btn5D is pushed, the forklift should move down
-	  {
-		  motor[port3] = -100;    //Set the motor speed to -100
-	  }
-	  else											//If no button is pushed, then nothing should move
-	  {
-		  motor[port3] = 0;				//Set the motor speed to 0
-	  }
+  if(vexRT[Btn5U] == 1)    //If Btn5U is pushed, the forklift should move up
+  {
+    motor[port3] = 100;      //Set the motor speed to 100
+  }
+  else if (vexRT[Btn5D] == 1)//If Btn5D is pushed, the forklift should move down
+  {
+    motor[port3] = -100;    //Set the motor speed to -100
+  }
+  else                      //If no button is pushed, then nothing should move
+  {
+    motor[port3] = 0;        //Set the motor speed to 0
+  }
 #endif
 }
 
 void init_flappy_wing(){
-		flappy_wing_position = 0 ;
-		motor[port5] = flappy_wing_position;
+  flappy_wing_position = 0 ;
+  motor[port5] = flappy_wing_position;
 }
 
 
-void flappy_wing(){					// Code for the Flappy wing
-		if(vexRT[Btn7R] == 1)		//If Btn7R is pushed, deploy the wing
-   	{
-		  flappy_wing_position = 127;		//Set the motor speed to 100
-	  }
-	  else if (vexRT[Btn7L] == 1) //If Btn7L is pushed, the wing should move left
-	  {
-		  flappy_wing_position = -127 ;	//Set the motor speed to -100
-	  }
-	  motor[port5] = flappy_wing_position;
+void flappy_wing(){          // Code for the Flappy wing
+  if(vexRT[Btn7R] == 1)    //If Btn7R is pushed, deploy the wing
+  {
+    flappy_wing_position = 127;    //Set the motor speed to 100
+  }
+  else if (vexRT[Btn7L] == 1) //If Btn7L is pushed, the wing should move left
+  {
+    flappy_wing_position = -127 ;  //Set the motor speed to -100
+  }
+  motor[port5] = flappy_wing_position;
 }
 
 void arm() {
-	if(vexRT[Btn6U] == 1)			//If Btn6U is pushed, the arm should move up
-   	{
-		  motor[port6] = 100;		//Set the motor speed to 100
-	  }
-	  else if (vexRT[Btn6D] == 1)	//If Btn6D is pushed, the arm should move down
-	  {
-		  motor[port6] = -100;	//Set the motor speed to -100
-	  }
-	  else
-	  {
-		  motor[port6] = 0;			//Set the motor speed to 0
-	  }
+  if(vexRT[Btn6U] == 1)      //If Btn6U is pushed, the arm should move up
+  {
+    motor[port6] = 100;    //Set the motor speed to 100
+  }
+  else if (vexRT[Btn6D] == 1)  //If Btn6D is pushed, the arm should move down
+  {
+    motor[port6] = -100;  //Set the motor speed to -100
+  }
+  else
+  {
+    motor[port6] = 0;      //Set the motor speed to 0
+  }
 }
 
 void end_effector()
 {
-	if(vexRT[Btn8U] == 1)			//If Btn8U is pushed, the end effector should move up
-	{
-		motor[port4] = 100;			//Set the motor spped to 100
-	}
-	else if (vexRT[Btn8D] == 1)	//If Btn8D is pushed, the end effector should move down
+  if(vexRT[Btn8U] == 1)      //If Btn8U is pushed, the end effector should move up
   {
-  	motor[port4]= -100;				//Set the motor speed to -100
+    motor[port4] = 100;      //Set the motor spped to 100
+  }
+  else if (vexRT[Btn8D] == 1)  //If Btn8D is pushed, the end effector should move down
+  {
+    motor[port4]= -100;        //Set the motor speed to -100
   }
   else
   {
-	  motor[port8] = 0;					//Set the motor speed 0
+    motor[port8] = 0;          //Set the motor speed 0
   }
 
-	if(vexRT[Btn8R] == 1)			//If Btn8R is pushed, the end effector should move right
-	{
-		motor[port8] = 100;			//Set the motor speed to 100
-	}
-	else if (vexRT[Btn8L] == 1)		//If Btn8L is pushed, then the end effector should move left
-	{
-		motor[port8]= -100;			//Set the motor speed to -100
+  if(vexRT[Btn8R] == 1)      //If Btn8R is pushed, the end effector should move right
+  {
+    motor[port8] = 100;      //Set the motor speed to 100
+  }
+  else if (vexRT[Btn8L] == 1)    //If Btn8L is pushed, then the end effector should move left
+  {
+    motor[port8]= -100;      //Set the motor speed to -100
   }
   else
   {
-    motor[port8] = 0;						//Set the motor speed to 0
+    motor[port8] = 0;            //Set the motor speed to 0
   }
 }
 
@@ -136,13 +135,13 @@ task main ()
 {
   init_flappy_wing() ;
   init_drive_parameters() ;
-	while (1)
-	{
+  while (1)
+  {
     change_speed();
-		drive();
-		collection();
-	  flappy_wing();
-	  arm();
-	  end_effector();
-	}
+    drive();
+    collection();
+    flappy_wing();
+    arm();
+    end_effector();
+  }
 }
