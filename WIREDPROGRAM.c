@@ -44,8 +44,8 @@ void change_speed(){
 void drive(){                  // Code for driving the robot
 #if ( _TARGET == "VirtWorld" )
   getJoystickSettings(joystick);
-  motor[port2] = -joystick.joy1_y2 / speed_divisor ;
-  motor[port3] = joystick.joy1_y1 / speed_divisor ;
+  motor[port10] = joystick.joy1_y2 / speed_divisor ;
+  motor[port1] = -joystick.joy1_y1 / speed_divisor ;
 #else
   motor[leftwheel] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
   motor[rightwheel] = vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
@@ -53,7 +53,20 @@ void drive(){                  // Code for driving the robot
 }
 
 void collection() {            //Code for the collection subsystem
-#if ( _TARGET != "VirtWorld")
+#if ( _TARGET == "VirtWorld")
+  if(joy1Btn(Btn5) == 1)    //If Btn5U is pushed, the forklift should move up
+  {
+    motor[port7] = 100;      //Set the motor speed to 100
+  }
+  else if (joy1Btn(Btn7) == 1)//If Btn5D is pushed, the forklift should move down
+  {
+    motor[port7] = -100;    //Set the motor speed to -100
+  }
+  else                      //If no button is pushed, then nothing should move
+  {
+    motor[port7] = 0;        //Set the motor speed to 0
+  }
+#else
   if(vexRT[Btn5U] == 1)    //If Btn5U is pushed, the forklift should move up
   {
     motor[forklift] = 100;      //Set the motor speed to 100
@@ -104,6 +117,20 @@ void arm_joint() {
 
 void end_effector()
 {
+#if ( _TARGET == "VirtWorld")
+  if(joy1Btn(Btn6) == 1)    //If Btn5U is pushed, the forklift should move up
+  {
+    motor[port6] = 100;      //Set the motor speed to 100
+  }
+  else if (joy1Btn(Btn8) == 1)//If Btn5D is pushed, the forklift should move down
+  {
+    motor[port6] = -100;    //Set the motor speed to -100
+  }
+  else                      //If no button is pushed, then nothing should move
+  {
+    motor[port6] = 0;        //Set the motor speed to 0
+  }
+#else
   if(vexRT[Btn8U] == 1)      //If Btn8U is pushed, the end effector should move up
   {
     motor[eeud] = 100;      //Set the motor spped to 100
@@ -129,6 +156,7 @@ void end_effector()
   {
     motor[eelr] = 0;            //Set the motor speed to 0
   }
+#endif
 }
 
 task main ()
