@@ -116,6 +116,6 @@ task main ()
 	  flappy_wing();
 	  arm();
 	  end_effector();
-
+		change_speed();
 	}
 }
