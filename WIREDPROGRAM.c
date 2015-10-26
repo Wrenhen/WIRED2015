@@ -31,11 +31,11 @@ void change_speed(){
 #endif
   if( last_speed_button_state == 0 && current_speed_button_state == 1)
   {
-    if (speed_divisor == 4 )
+    if (speed_divisor == 3 )
     {
       speed_divisor = 1;
     } else {
-      speed_divisor = 4;
+      speed_divisor = 3;
     }
   }
   last_speed_button_state = current_speed_button_state ;
@@ -47,8 +47,16 @@ void drive(){                  // Code for driving the robot
   motor[port10] = joystick.joy1_y2 / speed_divisor ;
   motor[port1] = -joystick.joy1_y1 / speed_divisor ;
 #else
-  motor[leftwheel] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
-  motor[rightwheel] = vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
+  if ( vexRT[Ch3] > 10 || vexRT[Ch3] < -10 ) {
+    motor[leftwheel] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
+  } else {
+  	motor[leftwheel] = 0 ;
+  }
+  if ( vexRT[Ch2] > 10 || vexRT[Ch2] < -10 ) {
+    motor[rightwheel] = -vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
+  } else {
+    motor[rightwheel] = 0 ;
+  }
 #endif
 }
 
@@ -91,11 +99,11 @@ void init_flappy_wing(){
 void flappy_wing(){          // Code for the Flappy wing
   if(vexRT[Btn7R] == 1)    //If Btn7R is pushed, deploy the wing
   {
-    flappy_wing_position = 127;    //Set the motor speed to 100
+    flappy_wing_position = -180;    //Set the motor speed to 100
   }
   else if (vexRT[Btn7L] == 1) //If Btn7L is pushed, the wing should move left
   {
-    flappy_wing_position = -127 ;  //Set the motor speed to -100
+    flappy_wing_position = 180 ;  //Set the motor speed to -100
   }
   motor[flappywing] = flappy_wing_position;
 }
@@ -103,11 +111,11 @@ void flappy_wing(){          // Code for the Flappy wing
 void arm_joint() {
   if(vexRT[Btn6U] == 1)      //If Btn6U is pushed, the arm should move up
   {
-    motor[arm] = 100;    //Set the motor speed to 100
+    motor[arm] = 127;    //Set the motor speed to 100
   }
   else if (vexRT[Btn6D] == 1)  //If Btn6D is pushed, the arm should move down
   {
-    motor[arm] = -100;  //Set the motor speed to -100
+    motor[arm] = -127;  //Set the motor speed to -100
   }
   else
   {
