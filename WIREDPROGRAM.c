@@ -19,211 +19,210 @@
 int speed_divisor ;
 int flappy_wing_position ;
 int last_speed_button_state ;
-int reverse_drive ;
-int last_reverse_drive_btn_state ;
-
+int forward_drive ;
+int last_forward_drive_btn_state ;
 
 void init_drive_parameters()
 {
-  speed_divisor = 1 ;
-  last_speed_button_state = 0 ;
-  reverse_drive = 0 ;
-  last_reverse_drive_btn_state = 0 ;
+    speed_divisor = 1 ;
+    last_speed_button_state = 0 ;
+    forward_drive = 1 ;
+    last_forward_drive_btn_state = 0 ;
 }
 
 void change_drive_direction()
 {
-	  int current_reverse_drive_btn_state = vexRT[Btn7D] ;
-		if ( current_reverse_drive_btn_state == 1 && last_reverse_drive_btn_state == 0 )
-		{
-			if(reverse_drive == 0)
-			{
-				reverse_drive = 1 ;
-			}
-		  else
-			{
-				reverse_drive = 0 ;
-			}
-		}
-		last_reverse_drive_btn_state = current_reverse_drive_btn_state ;
+    int current_forward_drive_btn_state = vexRT[Btn7D] ;
+    if ( current_forward_drive_btn_state == 1 && last_forward_drive_btn_state == 0 )
+    {
+        if(forward_drive == 0)
+        {
+            forward_drive = 1 ;
+        }
+        else
+        {
+            forward_drive = 0 ;
+        }
+    }
+    last_forward_drive_btn_state = current_forward_drive_btn_state ;
 }
 
 void change_speed(){
-  int current_speed_button_state ;
+    int current_speed_button_state ;
 #if ( _TARGET == "VirtWorld" )
-  current_speed_button_state = joy1Pov(Pov0) ;
+    current_speed_button_state = joy1Pov(Pov0) ;
 #else
-  current_speed_button_state = vexRT[Btn7U] ;
+    current_speed_button_state = vexRT[Btn7U] ;
 #endif
-  if( last_speed_button_state == 0 && current_speed_button_state == 1)
-  {
-    if (speed_divisor == 3 )
+    if( last_speed_button_state == 0 && current_speed_button_state == 1)
     {
-      speed_divisor = 1;
-    } else {
-      speed_divisor = 3;
+        if (speed_divisor == 3 )
+        {
+          speed_divisor = 1;
+        } else {
+          speed_divisor = 3;
+        }
     }
-  }
-  last_speed_button_state = current_speed_button_state ;
+    last_speed_button_state = current_speed_button_state ;
 }
 
-void drive(){                  // Code for driving the robot
+void drive() {                  // Code for driving the robot
 #if ( _TARGET == "VirtWorld" )
-  getJoystickSettings(joystick);
-  motor[port10] = joystick.joy1_y2 / speed_divisor ;
-  motor[port1] = -joystick.joy1_y1 / speed_divisor ;
+    getJoystickSettings(joystick);
+    motor[port10] = joystick.joy1_y2 / speed_divisor ;
+    motor[port1] = -joystick.joy1_y1 / speed_divisor ;
 #else
-
-	if (reverse_drive == 0)
-	{
-	  if ( vexRT[Ch3] > DEADBAND || vexRT[Ch3] < -DEADBAND ) {
-      motor[leftwheel] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
-    } else {
-  	  motor[leftwheel] = 0 ;
+    if (forward_drive == 1)
+    {
+        if ( vexRT[Ch3] > DEADBAND || vexRT[Ch3] < -DEADBAND ) {
+            motor[leftwheel] = vexRT[Ch3] / speed_divisor ;  // Controlling the left wheel using channel 3
+        } else {
+            motor[leftwheel] = 0 ;
+        }
+        if ( vexRT[Ch2] > DEADBAND || vexRT[Ch2] < -DEADBAND ) {
+            motor[rightwheel] = -vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
+        } else {
+            motor[rightwheel] = 0 ;
+        }
     }
-    if ( vexRT[Ch2] > DEADBAND || vexRT[Ch2] < -DEADBAND ) {
-      motor[rightwheel] = -vexRT[Ch2] / speed_divisor ;  //Controlling the right wheel using channel 2
-    } else {
-      motor[rightwheel] = 0 ;
+    else
+    {
+        if ( vexRT[Ch2] > DEADBAND || vexRT[Ch2] < -DEADBAND ) {
+            motor[leftwheel] = vexRT[Ch2] / speed_divisor ;  // Reverse controlling the left wheel using channel 2
+        }
+        else {
+            motor[leftwheel] = 0 ;
+        }
+        if ( vexRT[Ch3] > DEADBAND || vexRT[Ch3] < -DEADBAND ) {
+            motor[rightwheel] = -vexRT[Ch3] / speed_divisor ;  // Reverse controlling the right wheel using channel 3
+        }
+        else {
+            motor[rightwheel] = 0 ;
+        }
     }
-  }
-  else
-  {
-  	if ( vexRT[Ch2] > DEADBAND || vexRT[Ch2] < -DEADBAND ) {
-      motor[leftwheel] = vexRT[Ch2] / speed_divisor ;  // Controlling the left wheel using channel 3
-    } else {
-  	  motor[leftwheel] = 0 ;
-    }
-    if ( vexRT[Ch3] > DEADBAND || vexRT[Ch3] < -DEADBAND ) {
-      motor[rightwheel] = -vexRT[Ch3] / speed_divisor ;  //Controlling the right wheel using channel 2
-    } else {
-      motor[rightwheel] = 0 ;
-    }
-  }
-
-			}
-  	#endif
+}
+#endif
 
 
 void collection() {            //Code for the collection subsystem
 #if ( _TARGET == "VirtWorld")
-  if(joy1Btn(Btn5) == 1)    //If Btn5U is pushed, the forklift should move up
-  {
-    motor[port7] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (joy1Btn(Btn7) == 1)//If Btn5D is pushed, the forklift should move down
-  {
-    motor[port7] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else                      //If no button is pushed, then nothing should move
-  {
-    motor[port7] = 0;        //Set the motor speed to 0
-  }
+    if(joy1Btn(Btn5) == 1)    //If Btn5U is pushed, the forklift should move up
+    {
+        motor[port7] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
+    }
+        else if (joy1Btn(Btn7) == 1)//If Btn5D is pushed, the forklift should move down
+    {
+        motor[port7] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else                      //If no button is pushed, then nothing should move
+    {
+        motor[port7] = 0;        //Set the motor speed to 0
+    }
 #else
-  if(vexRT[Btn5U] == 1)    //If Btn5U is pushed, the forklift should move up
-  {
-    motor[forklift] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (vexRT[Btn5D] == 1)//If Btn5D is pushed, the forklift should move down
-  {
-    motor[forklift] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else                      //If no button is pushed, then nothing should move
-  {
-    motor[forklift] = 0;        //Set the motor speed to 0
-  }
+    if(vexRT[Btn5U] == 1)    //If Btn5U is pushed, the forklift should move up
+    {
+        motor[forklift] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
+    }
+    else if (vexRT[Btn5D] == 1)//If Btn5D is pushed, the forklift should move down
+    {
+        motor[forklift] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else                      //If no button is pushed, then nothing should move
+    {
+        motor[forklift] = 0;        //Set the motor speed to 0
+    }
 #endif
 }
 
 void init_flappy_wing(){
-  flappy_wing_position = 0 ;
-  motor[flappywing] = flappy_wing_position;
+    flappy_wing_position = 0 ;
+    motor[flappywing] = flappy_wing_position;
 }
 
 
 void flappy_wing(){          // Code for the Flappy wing
-  if(vexRT[Btn7R] == 1)    //If Btn7R is pushed, deploy the wing
-  {
-    flappy_wing_position = -MAX_MOTOR_SPEED;    //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (vexRT[Btn7L] == 1) //If Btn7L is pushed, the wing should move left
-  {
-    flappy_wing_position = MAX_MOTOR_SPEED ;  //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  motor[flappywing] = flappy_wing_position;
+    if(vexRT[Btn7R] == 1)    //If Btn7R is pushed, deploy the wing
+    {
+        flappy_wing_position = -MAX_MOTOR_SPEED;    //Set the motor speed to MAX_MOTOR_SPEED
+    }
+    else if (vexRT[Btn7L] == 1) //If Btn7L is pushed, the wing should move left
+    {
+        flappy_wing_position = MAX_MOTOR_SPEED ;  //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    motor[flappywing] = flappy_wing_position;
 }
 
 void arm_joint() {
-  if(vexRT[Btn6U] == 1)      //If Btn6U is pushed, the arm should move up
-  {
-    motor[arm] = MAX_MOTOR_SPEED;    //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (vexRT[Btn6D] == 1)  //If Btn6D is pushed, the arm should move down
-  {
-    motor[arm] = -MAX_MOTOR_SPEED;  //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else
-  {
-    motor[arm] = 0;      //Set the motor speed to 0
-  }
+    if(vexRT[Btn6U] == 1)      //If Btn6U is pushed, the arm should move up
+    {
+        motor[arm] = MAX_MOTOR_SPEED;    //Set the motor speed to MAX_MOTOR_SPEED
+    }
+    else if (vexRT[Btn6D] == 1)  //If Btn6D is pushed, the arm should move down
+    {
+        motor[arm] = -MAX_MOTOR_SPEED;  //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else
+    {
+        motor[arm] = 0;      //Set the motor speed to 0
+    }
 }
 
 void end_effector()
 {
 #if ( _TARGET == "VirtWorld")
-  if(joy1Btn(Btn6) == 1)    //If Btn5U is pushed, the forklift should move up
-  {
-    motor[port6] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (joy1Btn(Btn8) == 1)//If Btn5D is pushed, the forklift should move down
-  {
-    motor[port6] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else                      //If no button is pushed, then nothing should move
-  {
-    motor[port6] = 0;        //Set the motor speed to 0
-  }
+    if(joy1Btn(Btn6) == 1)    //If Btn5U is pushed, the forklift should move up
+    {
+        motor[port6] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
+    }
+    else if (joy1Btn(Btn8) == 1)//If Btn5D is pushed, the forklift should move down
+    {
+        motor[port6] = -MAX_MOTOR_SPEED;    //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else                      //If no button is pushed, then nothing should move
+    {
+        motor[port6] = 0;        //Set the motor speed to 0
+    }
 #else
-  if(vexRT[Btn8U] == 1)      //If Btn8U is pushed, the end effector should move up
-  {
-    motor[eeud] = MAX_MOTOR_SPEED;      //Set the motor spped to MAX_MOTOR_SPEED
-  }
-  else if (vexRT[Btn8D] == 1)  //If Btn8D is pushed, the end effector should move down
-  {
-    motor[eeud]= -MAX_MOTOR_SPEED;        //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else
-  {
-    motor[eelr] = 0;          //Set the motor speed 0
-  }
+    if(vexRT[Btn8U] == 1)      //If Btn8U is pushed, the end effector should move up
+    {
+        motor[eeud] = MAX_MOTOR_SPEED;      //Set the motor spped to MAX_MOTOR_SPEED
+    }
+    else if (vexRT[Btn8D] == 1)  //If Btn8D is pushed, the end effector should move down
+    {
+        motor[eeud]= -MAX_MOTOR_SPEED;        //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else
+    {
+        motor[eelr] = 0;          //Set the motor speed 0
+    }
 
-  if(vexRT[Btn8R] == 1)      //If Btn8R is pushed, the end effector should move right
-  {
-    motor[eelr] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
-  }
-  else if (vexRT[Btn8L] == 1)    //If Btn8L is pushed, then the end effector should move left
-  {
-    motor[eelr]= -MAX_MOTOR_SPEED;      //Set the motor speed to -MAX_MOTOR_SPEED
-  }
-  else
-  {
-    motor[eelr] = 0;            //Set the motor speed to 0
-  }
+    if(vexRT[Btn8R] == 1)      //If Btn8R is pushed, the end effector should move right
+    {
+        motor[eelr] = MAX_MOTOR_SPEED;      //Set the motor speed to MAX_MOTOR_SPEED
+    }
+    else if (vexRT[Btn8L] == 1)    //If Btn8L is pushed, then the end effector should move left
+    {
+        motor[eelr]= -MAX_MOTOR_SPEED;      //Set the motor speed to -MAX_MOTOR_SPEED
+    }
+    else
+    {
+        motor[eelr] = 0;            //Set the motor speed to 0
+    }
 #endif
 }
 
 task main ()
 {
-  init_flappy_wing() ;
-  init_drive_parameters() ;
-  while (1)
-  {
-    change_speed();
-    change_drive_direction();
-    drive();
-    collection();
-    flappy_wing();
-    arm_joint();
-    end_effector();
-  }
+    init_flappy_wing() ;
+    init_drive_parameters() ;
+    while (1)
+    {
+        change_speed();
+        change_drive_direction();
+        drive();
+        collection();
+        flappy_wing();
+        arm_joint();
+        end_effector();
+    }
 }
