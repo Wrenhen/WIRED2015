@@ -88,20 +88,20 @@ void drive() {                  // Code for driving the robot
     else
     {
         if ( vexRT[Ch2] > DEADBAND || vexRT[Ch2] < -DEADBAND ) {
-            motor[leftwheel] = vexRT[Ch2] / speed_divisor ;  // Reverse controlling the left wheel using channel 2
+            motor[leftwheel] = -vexRT[Ch2] / speed_divisor ;  // Reverse controlling the left wheel using channel 2
         }
         else {
             motor[leftwheel] = 0 ;
         }
         if ( vexRT[Ch3] > DEADBAND || vexRT[Ch3] < -DEADBAND ) {
-            motor[rightwheel] = -vexRT[Ch3] / speed_divisor ;  // Reverse controlling the right wheel using channel 3
+            motor[rightwheel] = vexRT[Ch3] / speed_divisor ;  // Reverse controlling the right wheel using channel 3
         }
         else {
             motor[rightwheel] = 0 ;
         }
     }
-}
 #endif
+}
 
 
 void collection() {            //Code for the collection subsystem
