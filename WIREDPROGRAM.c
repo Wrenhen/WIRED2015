@@ -56,11 +56,11 @@ void change_speed(){
 #endif
     if( last_speed_button_state == 0 && current_speed_button_state == 1)
     {
-        if (speed_divisor == 3 )
+        if (speed_divisor == 2 )
         {
           speed_divisor = 1;
         } else {
-          speed_divisor = 3;
+          speed_divisor = 2;
         }
     }
     last_speed_button_state = current_speed_button_state ;
